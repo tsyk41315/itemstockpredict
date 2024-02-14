@@ -37,7 +37,9 @@ class UserInput(BaseModel):
     end_date: date
 
 
-bst.load_model(model_file_path)
+# Booster オブジェクトの初期化
+bst_loaded = xgb.Booster()
+bst_loaded.load_model(model_file_path)
 
 @app.get('/predict/{item_id}/{start_date}/{end_date}')
 async def predict_sales(item_id: int, start_date: str, end_date: str):
@@ -67,10 +69,17 @@ async def predict_sales(item_id: int, start_date: str, end_date: str):
     # 予測を実行
     predictions = bst.predict(dtest)
 
+
+    # 予測値の合計を計算
+    total_predicted_sales = predictions.sum()
+
+    # 合計値を整数に丸める
+    total_predicted_sales_rounded = int(round(total_predicted_sales))
+
     
     return {
         "item_id": item_id,
-        "predictions": predictions,
+        "predictions": predictions.tolist(),  # NumPy 配列をリストに変換
         "start_date": start_date,
         "end_date": end_date
     }

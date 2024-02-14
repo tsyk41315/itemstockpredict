@@ -14,31 +14,20 @@ st.write('指定期間を選択すると期間内に必要な数量を算出し�
 from PIL import Image
 
 
-
 # 画像ファイルを開く
 image_path = '/Users/yasuhirokishi/Desktop/souko.png'  # 画像ファイルのパスを指定
 image = Image.open(image_path)
 
 # 画像を表示
-st.image(image, caption='倉庫の画像', use_column_width=True)
+st.image(image, use_column_width=True)
 
 
 # アイテム選択のためのexpander
-expander1 = st.expander('どのアイテムの予測をしますか？')
-with expander1:
-    # ユーザーにアイテムIDを入力させる
-    item_id = st.text_input("Enter the item ID:")
-
-expander2 = st.expander('予測期間の開始日は？')
-with expander2:
-    # ユーザーに予測期間の開始日を入力させる
-    start_date = st.date_input("Select the start date:")
-
-expander3 = st.expander('予測期間の終了日は？')
-with expander3:
-    # ユーザーに予測期間の開始日を入力させる
-    end_date = st.date_input("Select the end date:")
-
+expander = st.expander('Iterationが100になったら押してください')
+with expander:
+    item_id = st.text_input("どのアイテムの予測をしますか？")  # アイテムIDの入力
+    start_date = st.date_input("予測期間の開始日を選択してください:")  # 開始日の選択
+    end_date = st.date_input("予測期間の終了日を選択してください:")  # 終了日の選択
 
 # Streamlitウィジェットを使用してユーザー入力を取得
 #item_id = st.number_input("Enter the item ID:", min_value=1, max_value=3, value=1)
@@ -57,7 +46,14 @@ if st.button('Predict') and start_date and end_date:
         if response.status_code == 200:
             # 予測結果の表示
             predictions = response.json()
-            st.write(f"Predicted values: {predictions['predicted_sales']}")
+            # 予測値のリストから合計値を計算
+            total_predicted_sales = sum(predictions['predictions'])
+            
+            # 合計値を整数に丸める（必要に応じて）
+            total_predicted_sales_rounded = round(total_predicted_sales)
+            
+            # 合計予測値の表示
+            st.write(f"Predicted total sales from {start_date} to {end_date}: {total_predicted_sales_rounded}")
         else:
             st.write("Error in prediction")
     else:
@@ -65,7 +61,8 @@ if st.button('Predict') and start_date and end_date:
     
 # モデルの読み込み
 bst_loaded = xgb.Booster()
-bst_loaded.load_model('stockpredict.json')
+bst_loaded.load_model('models/stockpredict.json')
+
 
 
 import time
