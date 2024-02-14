@@ -1,0 +1,12 @@
+pandas
+streamlit
+requests
+datetime
+date
+xgboost
+fastapi
+pydantic
+BaseModel
+numpy
+os
+sklearn.model_selection
