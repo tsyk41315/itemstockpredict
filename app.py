@@ -14,9 +14,10 @@ st.write('指定期間を選択すると期間内に必要な数量を算出し�
 from PIL import Image
 
 
-# 画像ファイルを開く
-image_path = '/Users/yasuhirokishi/Desktop/souko.png'  # 画像ファイルのパスを指定
+# 相対パスを使用して画像ファイルのパスを指定
+image_path = 'warehouse.png'  # 「需要予測」フォルダ内の画像への相対パス
 image = Image.open(image_path)
+
 
 # 画像を表示
 st.image(image, use_column_width=True)
